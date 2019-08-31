@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Оплата скрытого текста для DLE Billing</name>
+	<description>Плагин позволяет создавать неограниченное количество платных тегов, которые позволят вам закрыть часть контента страницы до оплаты пользователем указанной суммы.</description>
+	<icon>engine/modules/billing/plugins/payhide/icon/icon.png</icon>
+	<version>1.3.4</version>
+	<dleversion>13.0</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[CREATE TABLE `{prefix}_billing_payhide` (
+	`payhide_id` int(11) NOT NULL AUTO_INCREMENT,
+	`payhide_user` varchar(40) NOT NULL,
+	`payhide_pagelink` varchar(128) NOT NULL,
+	`payhide_price` varchar(12) NOT NULL,
+	`payhide_date` int(11) NOT NULL,
+	`payhide_tag` varchar(12) NOT NULL,
+	`payhide_post_id` int(11) NOT NULL,
+	`payhide_time` int(11) NOT NULL,
+	PRIMARY KEY (`payhide_id`)
+) ENGINE={engine} DEFAULT CHARSET={charset} AUTO_INCREMENT=1;]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[DROP TABLE IF EXISTS `{prefix}_billing_payhide`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[function deleteDirPayhide($dir) {
+	if(is_dir($dir)){
+		$dir = rtrim($dir, "/") . "/";
+		$files = array_diff(scandir($dir), array('..', '.'));
+		foreach( $files as $file ){
+			deleteDirPayhide($dir . $file);      
+		}
+		@rmdir($dir);
+		return true;
+	} elseif(is_file($dir)) {
+		@unlink($dir);
+		return true;
+	}
+	return false;
+}
+deleteDirPayhide(ROOT_DIR . "/engine/modules/billing/plugins/payhide/");
+deleteDirPayhide(ROOT_DIR . "/engine/data/billing/plugin.payhide.php");]]></phpdelete>
+	<file name="engine/ajax/search.php">
+		<operation action="after">
+			<searchcode><![CDATA[$buffer .= "<span>".$description."</span></a>";]]></searchcode>
+			<replacecode><![CDATA[$buffer = preg_replace( "#\\[payhide(.+?)\\](.*?)\\[/payhide\\]#is", "", $buffer );]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>

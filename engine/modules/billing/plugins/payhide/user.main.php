@@ -19,7 +19,7 @@ Class USER
 			$this->plugin_config = include MODULE_DATA . "/plugin.payhide.php";
 		}
 
-		require_once MODULE_PATH . "/plugins/payhide/lang.php";
+		require_once DLEPlugins::Check( MODULE_PATH . "/plugins/payhide/lang.php" );
 
 		$this->local_lang = $plugin_lang;
 	}

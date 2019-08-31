@@ -2,6 +2,8 @@
 
 $plugin_lang = array
 (
+	'chose_group' => "Выберите группы пользователей",
+
 	'off' => "Оплата приостановлена",
 	'need_money' => "Недостаточно средств, Вам необходимо <a href='../../../pay/main/sum/%s' target='_blank' onClick='javascript: window.close();'>полнить баланс</a> на %s %s",
 	'already' => "Вы уже оплатили доступ к данному контенту<br /><br /><a href=\"javascript: window.opener.location.reload(); window.close();\">закрыть окно</a>",
@@ -37,7 +39,7 @@ $plugin_lang = array
 
 	'tag_1' => "Ключ тега:",
 	'tag_1d' => "Используйте только латинские буквы и цифры, без пробелов",
-	'tag_1d7' => "<span class=\"help-button\" data-rel=\"popover\" data-trigger=\"hover\" data-placement=\"right\" data-content=\"Возможна группировка нескольких платный тегов под одним ключом.\nВ этом случае, оплачивая один тег, пользователь получает доступ ко всей группе\" data-original-title=\"\" title=\"\">?</span>",
+	'tag_1d7' => "<i class=\"help-button visible-lg-inline-block text-primary-600 fa fa-question-circle position-right\" data-rel=\"popover\" data-trigger=\"hover\" data-placement=\"right\" data-content=\"Возможна группировка нескольких платный тегов под одним ключом.\nВ этом случае, оплачивая один тег, пользователь получает доступ ко всей группе\" data-original-title=\"\" title=\"\"></i>",
 	'tag_2' => "Цена доступа:",
 	'tag_2d' => "Укажите требуемую к оплате сумму для открытия содержимого тега",
 	'tag_3' => "Время доступа:",

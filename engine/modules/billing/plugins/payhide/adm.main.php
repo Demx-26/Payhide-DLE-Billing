@@ -14,7 +14,7 @@ Class ADMIN
 
 	function __construct()
 	{
-		require_once MODULE_PATH . "/plugins/payhide/lang.php";
+		require_once DLEPlugins::Check( MODULE_PATH . "/plugins/payhide/lang.php" );
 
 		$this->local_lang = $plugin_lang;
 	}
@@ -77,7 +77,7 @@ Class ADMIN
 			'<td>'.$this->local_lang['autor'].'</td>',
 			'<td>'.$this->local_lang['summa'].'</td>',
 			'<td>'.$this->local_lang['time'].'</td>',
-			'<td width="2%"><center><input type="checkbox" value="" name="massact_list[]" onclick="checkAll(this)" /></center></td>'
+			'<td width="2%"><center><input class="icheck" type="checkbox" value="" name="massact_list[]" onclick="checkAll(this);$.uniform.update();" /></center></td>'
 		));
 
 		$PerPage = $this->Dashboard->config['paging'];
@@ -103,7 +103,7 @@ Class ADMIN
 				$Value['autor'] ? $this->Dashboard->ThemeInfoUser( $Value['autor'] ) : '',
 				$Value['payhide_price'] . ' ' . $this->Dashboard->API->Declension( $Value['payhide_price'] ),
 				$Value['payhide_time'] ? ( ( $Value['payhide_time']>=$this->Dashboard->_TIME ) ? "<font color='green'>".$this->local_lang['timeTo'].langdate( "j F Y  G:i", $Value['payhide_time'])."</font>": "<font color='red'>".$this->local_lang['timeTo'].langdate( "j F Y  G:i", $Value['payhide_time'])."</font>" ) : $this->local_lang['timeFull'],
-				"<center><input name=\"massact_list[]\" value=\"".$Value['payhide_id']."\" type=\"checkbox\"></center>"
+				"<center><input name=\"massact_list[]\" value=\"".$Value['payhide_id']."\" class=\"icheck\" type=\"checkbox\"></center>"
 			));
 		}
 
@@ -112,7 +112,7 @@ Class ADMIN
 		if( $ResultCount['count'])
 		{
 			$Content .= $this->Dashboard->ThemePadded( '
-				<div class="pull-left" style="margin:7px; vertical-align: middle">
+				<div class="pull-left">
 					<ul class="pagination pagination-sm">' .
 						$this->Dashboard->API->Pagination(
 							$ResultCount['count'],
@@ -125,7 +125,9 @@ Class ADMIN
 					</ul>
 				</div>
 
-				<input class="btn btn-red" style="margin:7px; vertical-align: middle" name="act_do" type="submit" value="'.$this->Dashboard->lang['remove'].'">
+				<div class="pull-right">
+					<button class="btn bg-danger btn-sm btn-raised" name="act_do" type="submit"><i class="fa fa-trash-o position-left"></i>'.$this->Dashboard->lang['remove'].'</button>
+				</div>
 				<input type="hidden" name="user_hash" value="' . $this->Dashboard->hash . '" />', 'box-footer', 'right' );
 		}
 		else
@@ -164,21 +166,6 @@ Class ADMIN
 	#
 	private function install()
 	{
-		$tableSchema = array();
-		$tableSchema[] = "DROP TABLE IF EXISTS " . PREFIX . "_billing_payhide";
-		$tableSchema[] = "CREATE TABLE `" . PREFIX . "_billing_payhide` (
-							  `payhide_id` int(11) NOT NULL AUTO_INCREMENT,
-							  `payhide_user` varchar(40) NOT NULL,
-							  `payhide_pagelink` varchar(128) NOT NULL,
-							  `payhide_price` varchar(12) NOT NULL,
-							  `payhide_date` int(11) NOT NULL,
-							  `payhide_tag` varchar(12) NOT NULL,
-							  `payhide_post_id` int(11) NOT NULL,
-							  `payhide_time` int(11) NOT NULL,
-							  PRIMARY KEY (`payhide_id`)
-							) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-
-		foreach( $tableSchema as $table )  $this->Dashboard->LQuery->db->super_query($table);
 
 		$this->Dashboard->SaveConfig("plugin.payhide", array('status'=>"0"));
 
@@ -198,13 +185,13 @@ Class ADMIN
 		$this->Dashboard->ThemeAddStr(
 			$this->Dashboard->lang['paysys_name'],
 			$this->Dashboard->lang['refund_name_desc'],
-			"<input name=\"save_con[name]\" class=\"edit bk\" type=\"text\" value=\"" . $_Config['name'] ."\" style=\"width: 100%\">"
+			"<input name=\"save_con[name]\" class=\"form-control\" type=\"text\" value=\"" . $_Config['name'] ."\" style=\"width: 100%\">"
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['percent'],
 			$this->local_lang['percent_desc'],
-			"<input name=\"save_con[percent]\" class=\"edit bk\" type=\"text\" value=\"" . $_Config['percent'] ."\" style=\"width: 20%\"> %"
+			"<input name=\"save_con[percent]\" class=\"form-control\" type=\"text\" value=\"" . $_Config['percent'] ."\" style=\"width: 20%\"> %"
 		);
 
 		$Content .= $this->Dashboard->ThemeParserStr();
@@ -222,49 +209,49 @@ Class ADMIN
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_1'],
 			$this->local_lang['tag_1d'],
-			"<input id=\"phGenFormKey\" onkeyup=\"phGenForm()\" class=\"edit bk\" value=\"{$genKey}\" type=\"text\">" . $this->local_lang['tag_1d7']
+			"<input id=\"phGenFormKey\" onkeyup=\"phGenForm()\" class=\"form-control\" value=\"{$genKey}\" type=\"text\" style=\"width: 20%\">" . $this->local_lang['tag_1d7']
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_6'],
 			$this->local_lang['tag_6d'],
-			"<input type=\"checkbox\" onchange=\"phGenForm()\" id=\"phGenFormIDnews\" value=\"0\">"
+			"<input class=\"icheck\" type=\"checkbox\" onchange=\"phGenForm()\" id=\"phGenFormIDnews\" value=\"0\">"
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_autor'],
 			$this->local_lang['tag_autor_desc'],
-			"<input type=\"checkbox\" onchange=\"phGenForm()\" id=\"phGenFormAutor\" value=\"0\">"
+			"<input class=\"icheck\" type=\"checkbox\" onchange=\"phGenForm()\" id=\"phGenFormAutor\" value=\"0\">"
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_2'],
 			$this->local_lang['tag_2d'],
-			"<input id=\"phGenFormPrice\" onkeyup=\"phGenForm()\" class=\"edit bk\" type=\"text\" size=\"14\" value=\"10.00\"> " . $this->Dashboard->API->Declension( 10 )
+			"<input id=\"phGenFormPrice\" onkeyup=\"phGenForm()\" class=\"form-control\" type=\"text\" size=\"14\" value=\"10.00\" style=\"width: 20%\"> " . $this->Dashboard->API->Declension( 10 )
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_3'],
 			$this->local_lang['tag_3d'],
-			"<input id=\"phGenFormTime\" onkeyup=\"phGenForm()\" class=\"edit bk\" size=\"14\" type=\"text\">" . $this->local_lang['key_time']
+			"<input id=\"phGenFormTime\" onkeyup=\"phGenForm()\" class=\"form-control\" size=\"14\" type=\"text\" style=\"width: 20%\">" . $this->local_lang['key_time']
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_theme'],
 			$this->local_lang['tag_theme_desc'],
-			"<input id=\"phGenFormTheme\" onkeyup=\"phGenForm()\" class=\"edit bk\" style=\"width: 100%\" type=\"text\">"
+			"<input id=\"phGenFormTheme\" onkeyup=\"phGenForm()\" class=\"form-control\" style=\"width: 100%\" type=\"text\">"
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_theme_open'],
 			$this->local_lang['tag_theme_open_desc'],
-			"<input id=\"phGenFormThemeOpen\" onkeyup=\"phGenForm()\" class=\"edit bk\" style=\"width: 100%\" type=\"text\">"
+			"<input id=\"phGenFormThemeOpen\" onkeyup=\"phGenForm()\" class=\"form-control\" style=\"width: 100%\" type=\"text\">"
 		);
 
 		$this->Dashboard->ThemeAddStr(
 			$this->local_lang['tag_4'],
 			$this->local_lang['tag_4d'],
-			"<select id=\"phGenFormGroups\" class=\"edit bk\" style=\"width: 50%\" onchange=\"phGenForm()\" multiple><option></option>" . $this->Dashboard->GetGroups() . "</select>"
+			"<select data-placeholder=\"{$this->local_lang['chose_group']}\" title=\"{$this->local_lang['chose_group']}\" id=\"phGenFormGroups\" class=\"group_select\" style=\"width:100%;\" onchange=\"phGenForm()\" multiple><option></option>" . $this->Dashboard->GetGroups() . "</select>"
 		);
 
 		$this->Dashboard->ThemeAddStr(
@@ -337,6 +324,9 @@ Class ADMIN
 
 				$("#phGenFormTag").val( genForm );
 			}
+			$(function(){
+				$('.group_select').chosen({no_results_text: 'Ничего не найдено'});
+			});
 		</script>
 HTML;
 

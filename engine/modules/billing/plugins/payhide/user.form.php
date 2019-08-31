@@ -12,7 +12,7 @@ if( file_exists( ENGINE_DIR . "/data/billing/plugin.payhide.php" ) )
 	$_Config = include ENGINE_DIR . "/data/billing/plugin.payhide.php";
 }
 
-include ENGINE_DIR . "/modules/billing/plugins/payhide/lang.php";
+include DLEPlugins::Check( ENGINE_DIR . "/modules/billing/plugins/payhide/lang.php" );
 
 if( $_Config['status'] )
 {
